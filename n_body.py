@@ -23,29 +23,18 @@ def randomRBGColor():
     
     return (int(r),int(b),int(g))
 
+def randomBody(xRange, yRange, mRange, vRange):
+    m  = random.randint(mRange[0], mRange[1])
+    x  = random.randint(xRange[0], xRange[1])
+    y  = random.randint(yRange[0], yRange[1])
+    v1 = random.randint(vRange[0], vRange[1])
+    v2 = random.randint(vRange[0], vRange[1])
 
-# Define bodies
-body1  = Body(1e12, array([0,0]), array([0,0]))
-body2  = Body(1e1, array([2.4,0]), array([5,5]))
-body3  = Body(1e1, array([2.4,0]), array([6,6]))
-body4  = Body(1e1, array([2.4,0]), array([7,7]))
-body5  = Body(1e1, array([2.4,0]), array([8,8]))
-body6  = Body(1e1, array([2.4,0]), array([9,9]))
-body7  = Body(1e1, array([2.4,0]), array([10,10]))
-
-# Bodies that will be simulated
-bodies = []
-bodies.append(body1)
-bodies.append(body2)
-bodies.append(body3)
-bodies.append(body4)
-bodies.append(body5)
-bodies.append(body6) 
-bodies.append(body7) 
-
-# Simulation constants
-dt     = 0.1         # s
-G      = 6.67384e-11 # m³ / (kg * s²)
+    b  = Body(m, array([v1,v2]), array([x,y]))
+    return b
+    
+def randomBody2():
+    return randomBody((-2*640, 2*640), (-2*480,2*480), (1,1e12), (0,4))
 
 # Pygame initialzation
 pygame.init()
@@ -55,6 +44,20 @@ surface = pygame.display.set_mode((xResolution, yResolution))
 xCenter = int(xResolution / 2)
 yCenter = int(yResolution / 2)
 font = pygame.font.Font(None, 20)
+
+
+# Simulation constants
+N    = 50
+dt   = 1           # s
+G    = 6.67384e-11 # m³ / (kg * s²)
+maxV = 4           # m / s
+maxM = 1e12        # kg
+
+# Generate random bodies
+bodies = []
+for i in range(0, N):
+    bodies.append(randomBody((-xResolution, xResolution), (-yResolution, yResolution), (1,maxM), (0,maxV)))
+
 
 # Loop timesteps forever
 timestep = 0
@@ -84,8 +87,12 @@ while True:
         # Update body velocity
         bodies[i].v = a * dt + bodies[i].v
 
-        # When body outside of window
-        # replace on random position
+        # Bodies out of scope will be replaced by new random ones
+        if bodies[i].r[0] > xCenter or bodies[i].r[0] < -xCenter:
+            bodies[i] = randomBody((-xResolution, xResolution), (-yResolution, yResolution), (1,maxM), (0,maxV))
+            
+        if bodies[i].r[1] > yCenter or bodies[i].r[1] < -yCenter:
+            bodies[i] = randomBody((-xResolution, xResolution), (-yResolution, yResolution), (1,maxM), (0,maxV))
 
         # Pygame draw body
         pygame.draw.circle(surface, bodies[i].c, (xCenter + int(bodies[i].r[0]), yCenter + int(bodies[i].r[1])), 5,1)
@@ -93,6 +100,4 @@ while True:
         # Pygame write elapsed time
         text = font.render("Time: " + str(int(timestep * dt))+"s", True, (255,255,255))
         surface.blit(text,(10,10))
-
-# Output plot
 
