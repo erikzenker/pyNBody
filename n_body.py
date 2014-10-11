@@ -54,12 +54,18 @@ yResolution = 2*480
 surface = pygame.display.set_mode((xResolution, yResolution))
 xCenter = int(xResolution / 2)
 yCenter = int(yResolution / 2)
+font = pygame.font.Font(None, 20)
 
 # Loop timesteps forever
+timestep = 0
 while True:
+
+    # Increment timestep
+    timestep = timestep + 1
 
     # Pygame update screen
     pygame.display.update()
+
     surface.fill((0,0,0))
 
     for i in range(0, len(bodies)):
@@ -83,6 +89,10 @@ while True:
 
         # Pygame draw body
         pygame.draw.circle(surface, bodies[i].c, (xCenter + int(bodies[i].r[0]), yCenter + int(bodies[i].r[1])), 5,1)
+
+        # Pygame write elapsed time
+        text = font.render("Time: " + str(int(timestep * dt))+"s", True, (255,255,255))
+        surface.blit(text,(10,10))
 
 # Output plot
 
