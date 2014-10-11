@@ -38,8 +38,8 @@ def randomBody2():
 
 # Pygame initialzation
 pygame.init()
-xResolution = 2*640
-yResolution = 2*480
+xResolution = 640
+yResolution = 480
 surface = pygame.display.set_mode((xResolution, yResolution))
 xCenter = int(xResolution / 2)
 yCenter = int(yResolution / 2)
@@ -47,16 +47,16 @@ font = pygame.font.Font(None, 20)
 
 
 # Simulation constants
-N    = 50
-dt   = 1           # s
+N    = 40
+dt   = 0.1         # s
 G    = 6.67384e-11 # m³ / (kg * s²)
-maxV = 4           # m / s
-maxM = 1e12        # kg
+maxV = 1           # m / s
+maxM = 1e15        # kg
 
 # Generate random bodies
 bodies = []
 for i in range(0, N):
-    bodies.append(randomBody((-xResolution, xResolution), (-yResolution, yResolution), (1,maxM), (0,maxV)))
+    bodies.append(randomBody((-xResolution, xResolution), (-yResolution, yResolution), (0,maxM), (-maxV,maxV)))
 
 
 # Loop timesteps forever
@@ -68,7 +68,6 @@ while True:
 
     # Pygame update screen
     pygame.display.update()
-
     surface.fill((0,0,0))
 
     for i in range(0, len(bodies)):
@@ -89,10 +88,10 @@ while True:
 
         # Bodies out of scope will be replaced by new random ones
         if bodies[i].r[0] > xCenter or bodies[i].r[0] < -xCenter:
-            bodies[i] = randomBody((-xResolution, xResolution), (-yResolution, yResolution), (1,maxM), (0,maxV))
+            bodies[i] = randomBody((-xResolution, xResolution), (-yResolution, yResolution), (1,maxM), (-maxV,maxV))
             
         if bodies[i].r[1] > yCenter or bodies[i].r[1] < -yCenter:
-            bodies[i] = randomBody((-xResolution, xResolution), (-yResolution, yResolution), (1,maxM), (0,maxV))
+            bodies[i] = randomBody((-xResolution, xResolution), (-yResolution, yResolution), (1,maxM), (-maxV,maxV))
 
         # Pygame draw body
         pygame.draw.circle(surface, bodies[i].c, (xCenter + int(bodies[i].r[0]), yCenter + int(bodies[i].r[1])), 5,1)
